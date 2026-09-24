@@ -72,6 +72,33 @@ function doGet(e) {
   var mode = e.parameter.mode || "";
   var tarikh = e.parameter.tarikh || "";
 
+  if (mode === "senarai") {
+    var sheetS = getSheet();
+    var vals = sheetS.getDataRange().getValues();
+    var sen = [];
+    for (var j = 1; j < vals.length; j++) {
+      var w = vals[j];
+      if (!w[0]) continue;
+      var tim = new Date(w[0]);
+      if (tarikh) {
+        var hri = Utilities.formatDate(tim, "Asia/Kuala_Lumpur", "yyyy-MM-dd");
+        if (hri !== tarikh) continue;
+      }
+      sen.push({ timestamp: w[0], nama: w[1], waris: w[4] });
+    }
+    sen.sort(function (a, b) {
+      return new Date(b.timestamp) - new Date(a.timestamp);
+    });
+    var payloadS = { ok: true, rows: sen };
+    if (callback) {
+      var cbS = String(callback).replace(/[^A-Za-z0-9_$.]/g, "");
+      if (!cbS) cbS = "callback";
+      return ContentService.createTextOutput(cbS + "(" + JSON.stringify(payloadS) + ")")
+        .setMimeType(ContentService.MimeType.JAVASCRIPT);
+    }
+    return jsonResponse(payloadS);
+  }
+
   if (token) {
     var payload;
     if (token !== getConfig("ADMIN_TOKEN")) {
@@ -83,22 +110,13 @@ function doGet(e) {
       for (var i = 1; i < values.length; i++) {
         var v = values[i];
         if (!v[0]) continue;
-        if (mode === "senarai") {
-          var t = new Date(v[0]);
-          if (tarikh) {
-            var hari = Utilities.formatDate(t, "Asia/Kuala_Lumpur", "yyyy-MM-dd");
-            if (hari !== tarikh) continue;
-          }
-          rows.push({ timestamp: v[0], nama: v[1] });
-        } else {
-          rows.push({
-            timestamp: v[0],
-            nama: v[1],
-            ic: v[2],
-            alamat: v[3],
-            waris: v[4]
-          });
-        }
+        rows.push({
+          timestamp: v[0],
+          nama: v[1],
+          ic: v[2],
+          alamat: v[3],
+          waris: v[4]
+        });
       }
       rows.sort(function (a, b) {
         return new Date(b.timestamp) - new Date(a.timestamp);

@@ -68,29 +68,39 @@ function doPost(e) {
 function doGet(e) {
   var page = e.parameter.page || "";
   var token = e.parameter.token || "";
+  var callback = e.parameter.callback || "";
 
   if (token) {
+    var payload;
     if (token !== getConfig("ADMIN_TOKEN")) {
-      return jsonResponse({ ok: false, error: "Token tidak sah." });
-    }
-    var sheet = getSheet();
-    var values = sheet.getDataRange().getValues();
-    var rows = [];
-    for (var i = 1; i < values.length; i++) {
-      var v = values[i];
-      if (!v[0]) continue;
-      rows.push({
-        timestamp: v[0],
-        nama: v[1],
-        ic: v[2],
-        alamat: v[3],
-        waris: v[4]
+      payload = { ok: false, error: "Token tidak sah." };
+    } else {
+      var sheet = getSheet();
+      var values = sheet.getDataRange().getValues();
+      var rows = [];
+      for (var i = 1; i < values.length; i++) {
+        var v = values[i];
+        if (!v[0]) continue;
+        rows.push({
+          timestamp: v[0],
+          nama: v[1],
+          ic: v[2],
+          alamat: v[3],
+          waris: v[4]
+        });
+      }
+      rows.sort(function (a, b) {
+        return new Date(b.timestamp) - new Date(a.timestamp);
       });
+      payload = { ok: true, rows: rows };
     }
-    rows.sort(function (a, b) {
-      return new Date(b.timestamp) - new Date(a.timestamp);
-    });
-    return jsonResponse({ ok: true, rows: rows });
+    if (callback) {
+      var cb = String(callback).replace(/[^A-Za-z0-9_$.]/g, "");
+      if (!cb) cb = "callback";
+      return ContentService.createTextOutput(cb + "(" + JSON.stringify(payload) + ")")
+        .setMimeType(ContentService.MimeType.JAVASCRIPT);
+    }
+    return jsonResponse(payload);
   }
 
   if (page === "form") {

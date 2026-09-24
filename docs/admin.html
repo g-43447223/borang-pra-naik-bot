@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Panel pentadbir senarai pemanching">
+  <title>Panel Pentadbir</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>window.APP = { SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxnc5yfZcmNT06YoJfRqDp326Lnnlv7lkt2CgMEtITNm_9N9lQmR2Bsqjkg2Lz5EYlejQ/exec" };</script>
+</head>
+<body class="min-h-screen bg-slate-100">
+
+  <div id="viewLogin" class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-sm bg-white rounded-2xl shadow-xl p-6">
+      <h1 class="text-lg font-bold text-slate-800">Panel Pentadbir</h1>
+      <p class="text-sm text-slate-500 mt-1">Masukkan token untuk melihat senarai pemanching.</p>
+      <form id="formLogin" class="mt-4 space-y-4" novalidate>
+        <div>
+          <label for="token" class="block text-sm font-medium text-slate-700 mb-1">Token</label>
+          <input id="token" name="token" type="password" required autocomplete="current-password"
+                 class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-600/20">
+          <p id="err-login" class="text-red-600 text-xs mt-1 hidden" role="alert"></p>
+        </div>
+        <button id="btnLogMasuk" type="submit"
+                class="w-full bg-sky-700 hover:bg-sky-800 text-white font-semibold rounded-lg px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-sky-600/40">
+          Log Masuk
+        </button>
+      </form>
+      <a href="index.html"
+         class="block text-center text-slate-500 hover:text-slate-700 text-xs mt-3 underline focus:outline-none focus:ring-2 focus:ring-slate-400/40 rounded">
+        Muka Utama
+      </a>
+    </div>
+  </div>
+
+  <div id="viewAdmin" class="hidden">
+    <header class="bg-slate-900 text-white">
+      <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
+        <div>
+          <h1 class="font-bold">Senarai Pemanching</h1>
+          <p class="text-xs text-slate-400">Jumlah penyewa: <span id="bilangan">0</span></p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="btnMuatSemula" type="button"
+                  class="bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded-lg px-3 py-1.5 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400/40">
+            Muat Semula
+          </button>
+          <button id="btnEksport" type="button"
+                  class="bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium rounded-lg px-3 py-1.5 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600/40">
+            Eksport CSV
+          </button>
+          <button id="btnLogKeluar" type="button"
+                  class="text-slate-300 hover:text-white text-sm font-medium rounded-lg px-3 py-1.5 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400/40">
+            Log Keluar
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-6">
+      <div class="mb-4">
+        <label for="cari" class="block text-sm font-medium text-slate-700 mb-1">Cari</label>
+        <input id="cari" name="cari" type="search" placeholder="Cari mengikut nama atau no IC..."
+               class="w-full max-w-md rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-600/20">
+      </div>
+
+      <div id="pesan" class="hidden mb-4" role="alert"></div>
+
+      <div class="bg-white rounded-xl shadow overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left">
+            <thead class="bg-slate-800 text-white text-xs uppercase">
+              <tr>
+                <th class="px-4 py-3">Masa</th>
+                <th class="px-4 py-3">Nama</th>
+                <th class="px-4 py-3">No IC</th>
+                <th class="px-4 py-3">Tempat Tinggal</th>
+                <th class="px-4 py-3">No Waris</th>
+                <th class="px-4 py-3">WhatsApp</th>
+              </tr>
+            </thead>
+            <tbody id="baris" class="divide-y divide-slate-200"></tbody>
+          </table>
+        </div>
+        <div id="kosong" class="px-4 py-8 text-center text-sm text-slate-400 hidden">Tiada rekod.</div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      var scriptUrl = (window.APP && window.APP.SCRIPT_URL) ? window.APP.SCRIPT_URL : "";
+      var simpanToken = localStorage.getItem("bf_token") || "";
+      var dataNow = [];
+      var timeoutId = null;
+
+      function tunjukLogin() {
+        document.getElementById("viewLogin").classList.remove("hidden");
+        document.getElementById("viewAdmin").classList.add("hidden");
+      }
+
+      function tunjukAdmin() {
+        document.getElementById("viewLogin").classList.add("hidden");
+        document.getElementById("viewAdmin").classList.remove("hidden");
+      }
+
+      function formatMasa(t) {
+        try {
+          return new Date(t).toLocaleString("ms-MY", { dateStyle: "short", timeStyle: "short" });
+        } catch (e) {
+          return String(t);
+        }
+      }
+
+      function noWhatsapp(num) {
+        var d = String(num).replace(/[^0-9]/g, "");
+        if (d.charAt(0) === "0") d = "60" + d.substring(1);
+        return d;
+      }
+
+      function buatSelData(txt) {
+        var td = document.createElement("td");
+        td.className = "px-4 py-3 align-top";
+        td.textContent = txt;
+        return td;
+      }
+
+      function buatSelKonsum(txt) {
+        var td = document.createElement("td");
+        td.className = "px-4 py-3 whitespace-nowrap align-top";
+        td.textContent = txt;
+        return td;
+      }
+
+      function render() {
+        var q = document.getElementById("cari").value.trim().toLowerCase();
+        var senarai = dataNow.filter(function (r) {
+          if (!q) return true;
+          return (r.nama || "").toLowerCase().indexOf(q) >= 0 ||
+                 (r.ic || "").toLowerCase().indexOf(q) >= 0;
+        });
+
+        document.getElementById("bilangan").textContent = dataNow.length + " (dipaparkan " + senarai.length + ")";
+
+        var tbody = document.getElementById("baris");
+        tbody.innerHTML = "";
+
+        var kosong = document.getElementById("kosong");
+        if (!senarai.length) {
+          kosong.classList.remove("hidden");
+          return;
+        }
+        kosong.classList.add("hidden");
+
+        senarai.forEach(function (r) {
+          var tr = document.createElement("tr");
+          tr.classList.add("hover:bg-slate-50");
+          tr.appendChild(buatSelKonsum(formatMasa(r.timestamp)));
+          tr.appendChild(buatSelData(r.nama));
+          tr.appendChild(buatSelKonsum(r.ic));
+          tr.appendChild(buatSelData(r.alamat));
+          tr.appendChild(buatSelKonsum(r.waris));
+
+          var td = document.createElement("td");
+          td.className = "px-4 py-3 whitespace-nowrap align-top";
+          var a = document.createElement("a");
+          a.href = "https://wa.me/" + noWhatsapp(r.waris);
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+          a.className = "inline-block bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg px-3 py-1.5 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600/40";
+          a.textContent = "WhatsApp Waris";
+          td.appendChild(a);
+          tr.appendChild(td);
+
+          tbody.appendChild(tr);
+        });
+      }
+
+      function setPesanJelas() {
+        var el = document.getElementById("pesan");
+        el.classList.add("hidden");
+        el.classList.remove("text-red-600", "text-emerald-700");
+        el.textContent = "";
+      }
+
+      function setPesan(msg, fail) {
+        var el = document.getElementById("pesan");
+        el.classList.remove("hidden", "text-red-600", "text-emerald-700");
+        el.classList.add(fail ? "text-red-600" : "text-emerald-700");
+        el.textContent = msg;
+      }
+
+      function ambilData() {
+        setPesanJelas();
+        var btn = document.getElementById("btnMuatSemula");
+        btn.disabled = true;
+        btn.textContent = "Memuat...";
+
+        if (!scriptUrl) {
+          setPesan("Aplikasi belum dikonfigurasi. Sila hubungi pentadbir.", true);
+          btn.disabled = false;
+          btn.textContent = "Muat Semula";
+          tunjukLogin();
+          return;
+        }
+
+        if (timeoutId) clearTimeout(timeoutId);
+        timeoutId = setTimeout(function () {
+          setPesan("Ralat memuat data. Sila cuba lagi.", true);
+          btn.disabled = false;
+          btn.textContent = "Muat Semula";
+          tunjukLogin();
+        }, 10000);
+
+        window.bfJsonp = function (data) {
+          if (timeoutId) clearTimeout(timeoutId);
+          btn.disabled = false;
+          btn.textContent = "Muat Semula";
+          if (data && data.ok) {
+            dataNow = data.rows || [];
+            render();
+            localStorage.setItem("bf_token", simpanToken);
+            tunjukAdmin();
+          } else {
+            localStorage.removeItem("bf_token");
+            setPesan("Token tidak sah.", true);
+            tunjukLogin();
+          }
+        };
+
+        var s = document.createElement("script");
+        s.src = scriptUrl + "?token=" + encodeURIComponent(simpanToken) + "&callback=bfJsonp";
+        s.onerror = function () {
+          if (timeoutId) clearTimeout(timeoutId);
+          btn.disabled = false;
+          btn.textContent = "Muat Semula";
+          setPesan("Ralat memuat data. Sila cuba lagi.", true);
+          tunjukLogin();
+        };
+        document.head.appendChild(s);
+      }
+
+      document.getElementById("formLogin").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var er = document.getElementById("err-login");
+        er.classList.add("hidden");
+        simpanToken = document.getElementById("token").value.trim();
+        if (!simpanToken) {
+          er.textContent = "Sila masukkan token.";
+          er.classList.remove("hidden");
+          return;
+        }
+        ambilData();
+      });
+
+      document.getElementById("btnMuatSemula").addEventListener("click", ambilData);
+
+      document.getElementById("btnLogKeluar").addEventListener("click", function () {
+        localStorage.removeItem("bf_token");
+        simpanToken = "";
+        document.getElementById("token").value = "";
+        setPesanJelas();
+        dataNow = [];
+        tunjukLogin();
+      });
+
+      document.getElementById("cari").addEventListener("input", render);
+
+      document.getElementById("btnEksport").addEventListener("click", function () {
+        var barisCSV = [["Timestamp", "Nama Penuh", "No IC", "Tempat Tinggal", "No Waris"]];
+        dataNow.forEach(function (r) {
+          barisCSV.push([r.timestamp, r.nama, r.ic, r.alamat, r.waris]);
+        });
+        var csv = "\ufeff" + barisCSV.map(function (row) {
+          return row.map(function (c) {
+            return '"' + String(c == null ? "" : c).replace(/"/g, '""') + '"';
+          }).join(",");
+        }).join("\r\n");
+        var blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "senarai-pemanching.csv";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
+      });
+
+      if (simpanToken) {
+        ambilData();
+      } else {
+        tunjukLogin();
+      }
+    })();
+  </script>
+</body>
+</html>

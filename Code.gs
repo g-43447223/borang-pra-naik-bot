@@ -69,6 +69,8 @@ function doGet(e) {
   var page = e.parameter.page || "";
   var token = e.parameter.token || "";
   var callback = e.parameter.callback || "";
+  var mode = e.parameter.mode || "";
+  var tarikh = e.parameter.tarikh || "";
 
   if (token) {
     var payload;
@@ -81,13 +83,22 @@ function doGet(e) {
       for (var i = 1; i < values.length; i++) {
         var v = values[i];
         if (!v[0]) continue;
-        rows.push({
-          timestamp: v[0],
-          nama: v[1],
-          ic: v[2],
-          alamat: v[3],
-          waris: v[4]
-        });
+        if (mode === "senarai") {
+          var t = new Date(v[0]);
+          if (tarikh) {
+            var hari = Utilities.formatDate(t, "Asia/Kuala_Lumpur", "yyyy-MM-dd");
+            if (hari !== tarikh) continue;
+          }
+          rows.push({ timestamp: v[0], nama: v[1] });
+        } else {
+          rows.push({
+            timestamp: v[0],
+            nama: v[1],
+            ic: v[2],
+            alamat: v[3],
+            waris: v[4]
+          });
+        }
       }
       rows.sort(function (a, b) {
         return new Date(b.timestamp) - new Date(a.timestamp);
@@ -109,6 +120,10 @@ function doGet(e) {
 
   if (page === "pengurusan") {
     return servePage("admin", "Panel Pentadbir");
+  }
+
+  if (page === "senarai") {
+    return servePage("senarai", "Senarai Peserta");
   }
 
   return servePage("home", "Pra-Naik Bot");

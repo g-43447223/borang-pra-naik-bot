@@ -52,7 +52,11 @@
 
         <button id="btnHantar" type="submit"
                 class="w-full bg-sky-700 hover:bg-sky-800 active:bg-sky-900 text-white font-semibold rounded-lg px-3 py-2.5 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-sky-600/40">
-          Hantar
+          <svg id="spinnerHantar" class="hidden animate-spin -ml-1 mr-2 h-4 w-4 inline-block" viewBox="0 0 24 24" fill="none">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+          <span id="teksHantar">Hantar</span>
         </button>
 
         <p id="status" class="text-sm text-center hidden" role="status"></p>
@@ -129,7 +133,8 @@
 
         var btn = document.getElementById("btnHantar");
         btn.disabled = true;
-        btn.textContent = "Sedang hantar...";
+        document.getElementById("teksHantar").textContent = "Sedang hantar...";
+        document.getElementById("spinnerHantar").classList.remove("hidden");
         try {
           var res = await fetch(scriptUrl, {
             method: "POST",
@@ -147,7 +152,8 @@
           setStatus("Ralat rangkaian. Sila cuba lagi.", false, true);
         } finally {
           btn.disabled = false;
-          btn.textContent = "Hantar";
+          document.getElementById("teksHantar").textContent = "Hantar";
+          document.getElementById("spinnerHantar").classList.add("hidden");
         }
       });
 

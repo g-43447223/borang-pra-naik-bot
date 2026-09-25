@@ -8,13 +8,18 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script>window.APP = { SCRIPT_URL: "<?= ScriptApp.getService().getUrl() ?>" };</script>
 </head>
-<body class="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+<body class="min-h-screen bg-gradient-to-b from-sky-950 via-slate-900 to-slate-950 flex items-center justify-center p-4">
   <main class="w-full max-w-md">
     <div class="rounded-2xl bg-slate-900 border border-slate-800 shadow-xl overflow-hidden">
       <div class="px-6 py-8 text-center">
-        <h1 class="text-2xl font-bold text-white">Trip Mancing Wak Jeman</h1>
+        <h1 class="text-2xl font-bold text-white inline-flex items-center justify-center gap-2">
+          <svg class="inline-block w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13l18-1.5L18 18H6L3 13z"/><path d="M8 13V7h3.5L16 9v4"/><path d="M2 20h20"/></svg>
+          Trip Mancing Wak Jeman
+        </h1>
         <p class="text-sm text-slate-400 mt-2">Pilih salah satu pilihan di bawah.</p>
       </div>
+
+      <svg class="w-full text-sky-500/30" viewBox="0 0 1440 60" preserveAspectRatio="none" fill="currentColor" aria-hidden="true"><path d="M0 30C90 10 180 10 270 30s180 20 270 0 180-20 270 0 180 20 270 0 180-20 270 0V60H0z"/></svg>
 
       <div class="px-6 pb-8 space-y-4">
         <a href="<?= ScriptApp.getService().getUrl() ?>?page=form"

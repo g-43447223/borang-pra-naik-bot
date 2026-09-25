@@ -133,7 +133,7 @@ function doGet(e) {
   }
 
   if (page === "form") {
-    return servePage("index", "Borang Peserta Trip Mancing Wak Jeman");
+    return servePage("index", "Borang Peserta - TERITIP SEGARA SERVICES");
   }
 
   if (page === "pengurusan") {
@@ -144,7 +144,7 @@ function doGet(e) {
     return servePage("senarai", "Senarai Peserta");
   }
 
-  return servePage("home", "Trip Mancing Wak Jeman");
+  return servePage("home", "TERITIP SEGARA SERVICES");
 }
 
 function clearEmptyRows() {

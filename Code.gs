@@ -133,7 +133,7 @@ function doGet(e) {
   }
 
   if (page === "form") {
-    return servePage("index", "Borang Pra-Naik Bot");
+    return servePage("index", "Borang Peserta Trip Mancing Wak Jeman");
   }
 
   if (page === "pengurusan") {
@@ -144,7 +144,7 @@ function doGet(e) {
     return servePage("senarai", "Senarai Peserta");
   }
 
-  return servePage("home", "Pra-Naik Bot");
+  return servePage("home", "Trip Mancing Wak Jeman");
 }
 
 function clearEmptyRows() {

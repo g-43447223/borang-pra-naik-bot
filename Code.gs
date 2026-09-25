@@ -148,7 +148,8 @@ function doGet(e) {
           nama: v[1],
           ic: v[2],
           alamat: v[3],
-          waris: v[4]
+          waris: v[4],
+          telefon: v[5]
         });
       }
       rows.sort(function (a, b) {

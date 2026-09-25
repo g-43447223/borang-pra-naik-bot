@@ -6,6 +6,7 @@
   <meta name="description" content="Borang pendaftaran peserta trip memancing">
   <title>Borang Peserta Trip Mancing Wak Jeman</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>@keyframes alunan{from{transform:translateX(-12px)}to{transform:translateX(12px)}}.wave{animation:alunan 9s ease-in-out infinite alternate}</style>
   <script>window.APP = { SCRIPT_URL: "<?= ScriptApp.getService().getUrl() ?>" };</script>
 </head>
 <body class="min-h-screen bg-gradient-to-b from-sky-950 via-slate-900 to-slate-950 flex items-center justify-center p-4">
@@ -17,12 +18,18 @@
         Borang Peserta Trip Mancing Wak Jeman
       </h1>
       <p class="text-sm text-slate-400 mt-1">Sila isi borang ini sebelum menaiki bot untuk kegunaan kecemasan.</p>
-      <svg class="w-full text-sky-500/30 mt-4" viewBox="0 0 1440 60" preserveAspectRatio="none" fill="currentColor" aria-hidden="true"><path d="M0 30C90 10 180 10 270 30s180 20 270 0 180-20 270 0 180 20 270 0 180-20 270 0V60H0z"/></svg>
+      <svg class="wave w-full text-sky-500/30 mt-4" viewBox="0 0 1440 60" preserveAspectRatio="none" fill="currentColor" aria-hidden="true"><path d="M0 30C90 10 180 10 270 30s180 20 270 0 180-20 270 0 180 20 270 0 180-20 270 0V60H0z"/></svg>
     </div>
 
     <div class="rounded-2xl bg-white shadow-xl overflow-hidden">
+      <div class="h-1.5 bg-gradient-to-r from-sky-600 via-sky-400 to-emerald-400"></div>
 
       <form id="formPenyewa" class="p-6 space-y-4" novalidate>
+        <div class="flex items-center gap-2 border-b border-slate-100 pb-2">
+          <svg class="inline-block w-4 h-4 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13l18-1.5L18 18H6L3 13z"/><path d="M8 13V7h3.5L16 9v4"/></svg>
+          <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Maklumat Peribadi</span>
+        </div>
+
         <div>
           <label for="nama" class="block text-sm font-medium text-slate-700 mb-1">Nama Penuh</label>
           <input id="nama" name="nama" type="text" autocomplete="name" required
@@ -43,6 +50,11 @@
           <textarea id="alamat" name="alamat" rows="2" required
                     class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-600/20"></textarea>
           <p id="err-alamat" class="text-red-600 text-xs mt-1 hidden" role="alert"></p>
+        </div>
+
+        <div class="flex items-center gap-2 border-b border-slate-100 pb-2 pt-2">
+          <svg class="inline-block w-4 h-4 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13l18-1.5L18 18H6L3 13z"/><path d="M8 13V7h3.5L16 9v4"/></svg>
+          <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Maklumat Waris &amp; Kecemasan</span>
         </div>
 
         <div>

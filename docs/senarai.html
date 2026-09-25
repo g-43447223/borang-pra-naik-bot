@@ -6,6 +6,7 @@
   <meta name="description" content="Senarai peserta yang menyertai trip pada sesuatu tarikh">
   <title>Senarai Peserta Trip</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>@keyframes alunan{from{transform:translateX(-12px)}to{transform:translateX(12px)}}.wave{animation:alunan 9s ease-in-out infinite alternate}</style>
   <script>window.APP = { SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxnc5yfZcmNT06YoJfRqDp326Lnnlv7lkt2CgMEtITNm_9N9lQmR2Bsqjkg2Lz5EYlejQ/exec" };</script>
 </head>
 <body class="min-h-screen bg-gradient-to-b from-sky-50 via-slate-100 to-slate-100">
@@ -27,7 +28,7 @@
       </div>
     </header>
 
-    <svg class="w-full text-slate-100" viewBox="0 0 1440 60" preserveAspectRatio="none" fill="currentColor" aria-hidden="true"><path d="M0 30C90 10 180 10 270 30s180 20 270 0 180-20 270 0 180 20 270 0 180-20 270 0V60H0z"/></svg>
+    <svg class="wave w-full text-slate-100" viewBox="0 0 1440 60" preserveAspectRatio="none" fill="currentColor" aria-hidden="true"><path d="M0 30C90 10 180 10 270 30s180 20 270 0 180-20 270 0 180 20 270 0 180-20 270 0V60H0z"/></svg>
 
     <main class="max-w-3xl mx-auto px-4 py-6">
       <div class="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800 mb-4">
@@ -125,7 +126,7 @@
 
         senarai.forEach(function (r, i) {
           var li = document.createElement("li");
-          li.className = "px-4 py-3 flex items-center justify-between gap-3";
+          li.className = "px-4 py-3 flex items-center justify-between gap-3 hover:bg-sky-50";
 
           var kiri = document.createElement("div");
           var spanNama = document.createElement("span");

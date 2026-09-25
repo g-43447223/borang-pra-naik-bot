@@ -6,13 +6,17 @@
   <meta name="description" content="Panel pentadbir senarai pemancing">
   <title>Panel Pentadbir</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>@keyframes alunan{from{transform:translateX(-12px)}to{transform:translateX(12px)}}.wave{animation:alunan 9s ease-in-out infinite alternate}</style>
   <script>window.APP = { SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxnc5yfZcmNT06YoJfRqDp326Lnnlv7lkt2CgMEtITNm_9N9lQmR2Bsqjkg2Lz5EYlejQ/exec" };</script>
 </head>
 <body class="min-h-screen bg-gradient-to-b from-sky-50 via-slate-100 to-slate-100">
 
   <div id="viewLogin" class="min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-sm bg-white rounded-2xl shadow-xl p-6">
-      <h1 class="text-lg font-bold text-slate-800">Panel Pentadbir</h1>
+      <h1 class="text-lg font-bold text-slate-800 inline-flex items-center gap-2">
+        <svg class="inline-block w-5 h-5 text-sky-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13l18-1.5L18 18H6L3 13z"/><path d="M8 13V7h3.5L16 9v4"/><path d="M2 20h20"/></svg>
+        Panel Pentadbir
+      </h1>
       <p class="text-sm text-slate-500 mt-1">Masukkan token untuk melihat senarai pemancing.</p>
       <form id="formLogin" class="mt-4 space-y-4" novalidate>
         <div>
@@ -72,7 +76,7 @@
       </div>
     </header>
 
-    <svg class="w-full text-slate-100" viewBox="0 0 1440 60" preserveAspectRatio="none" fill="currentColor" aria-hidden="true"><path d="M0 30C90 10 180 10 270 30s180 20 270 0 180-20 270 0 180 20 270 0 180-20 270 0V60H0z"/></svg>
+    <svg class="wave w-full text-slate-100" viewBox="0 0 1440 60" preserveAspectRatio="none" fill="currentColor" aria-hidden="true"><path d="M0 30C90 10 180 10 270 30s180 20 270 0 180-20 270 0 180 20 270 0 180-20 270 0V60H0z"/></svg>
 
     <main class="max-w-6xl mx-auto px-4 py-6">
       <div class="mb-4">
@@ -83,7 +87,7 @@
 
       <div id="pesan" class="hidden mb-4" role="alert"></div>
 
-      <div class="bg-white rounded-xl shadow overflow-hidden">
+      <div class="bg-white rounded-xl border border-sky-100 shadow overflow-hidden">
         <div class="overflow-x-auto">
           <table class="w-full text-sm text-left">
             <thead class="bg-gradient-to-r from-sky-900 to-slate-800 text-white text-xs uppercase">
@@ -171,7 +175,7 @@
 
         senarai.forEach(function (r) {
           var tr = document.createElement("tr");
-          tr.classList.add("hover:bg-slate-50");
+          tr.classList.add("hover:bg-sky-50");
           tr.appendChild(buatSelKonsum(formatMasa(r.timestamp)));
           tr.appendChild(buatSelData(r.nama));
           tr.appendChild(buatSelKonsum(r.ic));

@@ -105,6 +105,7 @@
                 <th class="px-4 py-3">No Telefon</th>
                 <th class="px-4 py-3">No Waris</th>
                 <th class="px-4 py-3">WhatsApp</th>
+                <th class="px-4 py-3">Tindakan</th>
               </tr>
             </thead>
             <tbody id="baris" class="divide-y divide-slate-200"></tbody>
@@ -198,7 +199,20 @@
           a.className = "inline-block bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg px-3 py-1.5 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600/40";
           a.textContent = "WhatsApp Waris";
           td.appendChild(a);
-          tr.appendChild(td);
+
+          var tdPadam = document.createElement("td");
+          tdPadam.className = "px-4 py-3 whitespace-nowrap align-top";
+          var btnPadam = document.createElement("button");
+          btnPadam.type = "button";
+          btnPadam.textContent = "Padam";
+          btnPadam.className = "inline-block bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded-lg px-3 py-1.5 transition-colors focus:outline-none focus:ring-2 focus:ring-red-600/40";
+          btnPadam.addEventListener("click", function () {
+            if (confirm("Padam rekod '" + r.nama + "'?") === true) {
+              padamRekod(r.timestamp);
+            }
+          });
+          tdPadam.appendChild(btnPadam);
+          tr.appendChild(tdPadam);
 
           tbody.appendChild(tr);
         });
@@ -216,6 +230,28 @@
         el.classList.remove("hidden", "text-red-600", "text-emerald-700");
         el.classList.add(fail ? "text-red-600" : "text-emerald-700");
         el.textContent = msg;
+      }
+
+      async function padamRekod(ts) {
+        if (!scriptUrl) {
+          setPesan("Aplikasi belum dikonfigurasi. Sila hubungi pentadbir.", true);
+          return;
+        }
+        try {
+          var res = await fetch(scriptUrl, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({ action: "padam", token: simpanToken, timestamp: ts })
+          });
+          var data = await res.json();
+          if (data.ok) {
+            ambilData();
+          } else {
+            setPesan(data.error || "Gagal memadam rekod.", true);
+          }
+        } catch (err) {
+          setPesan("Ralat rangkaian. Sila cuba lagi.", true);
+        }
       }
 
       function siapMuat() {

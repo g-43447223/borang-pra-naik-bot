@@ -45,6 +45,28 @@ function doPost(e) {
     var raw = (e.postData && e.postData.contents) ? e.postData.contents : "";
     var body = JSON.parse(raw);
 
+    var action = String(body.action || "");
+    var token = String(body.token || "");
+    var timestamp = String(body.timestamp || "");
+
+    if (action === "padam") {
+      if (token !== getConfig("ADMIN_TOKEN")) {
+        return jsonResponse({ ok: false, error: "Token tidak sah." });
+      }
+      if (!timestamp) {
+        return jsonResponse({ ok: false, error: "Rekod tidak dikenal pasti." });
+      }
+      var sheetD = getSheet();
+      var valsD = sheetD.getDataRange().getValues();
+      for (var k = 1; k < valsD.length; k++) {
+        if (valsD[k][0] && new Date(valsD[k][0]).toISOString() === timestamp) {
+          sheetD.deleteRow(k + 1);
+          return jsonResponse({ ok: true, message: "Rekod telah dipadam." });
+        }
+      }
+      return jsonResponse({ ok: false, error: "Rekod tidak ditemui. Sila muat semula dahulu." });
+    }
+
     var nama = String(body.nama || "").trim();
     var ic = String(body.ic || "").trim();
     var alamat = String(body.alamat || "").trim();

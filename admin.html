@@ -6,7 +6,6 @@
   <meta name="description" content="Panel pentadbir senarai pemancing">
   <title>Panel Pentadbir</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>@keyframes alunan{from{transform:translateX(-6px)}to{transform:translateX(6px)}}.wave{animation:alunan 9s ease-in-out infinite alternate}</style>
   <script>window.APP = { SCRIPT_URL: "<?= ScriptApp.getService().getUrl() ?>" };</script>
 </head>
 <body class="min-h-screen bg-gradient-to-b from-sky-50 via-slate-100 to-slate-100">
@@ -81,8 +80,6 @@
         </div>
       </div>
     </header>
-
-    <svg class="wave block w-full h-4 text-slate-100" viewBox="0 0 1440 60" preserveAspectRatio="none" fill="currentColor" aria-hidden="true"><path d="M0 30C90 10 180 10 270 30s180 20 270 0 180-20 270 0 180 20 270 0 180-20 270 0V60H0z"/></svg>
 
     <main class="max-w-6xl mx-auto px-4 py-6">
       <div class="mb-4">

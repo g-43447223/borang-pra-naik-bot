@@ -112,6 +112,7 @@
               <tr>
                 <th class="px-4 py-3">Masa</th>
                 <th class="px-4 py-3">Nama</th>
+                <th class="px-4 py-3">Trip</th>
                 <th class="px-4 py-3">No IC</th>
                 <th class="px-4 py-3">Tempat Tinggal</th>
                 <th class="px-4 py-3">No Telefon</th>
@@ -220,6 +221,7 @@
           tr.classList.add("hover:bg-sky-50");
           tr.appendChild(buatSelKonsum(formatMasa(r.timestamp)));
           tr.appendChild(buatSelData(r.nama));
+          tr.appendChild(buatSelKonsum(r.trip || ""));
           tr.appendChild(buatSelKonsum(r.ic));
           tr.appendChild(buatSelData(r.alamat));
           tr.appendChild(buatSelKonsum(r.telefon));
@@ -371,9 +373,9 @@
       });
 
       document.getElementById("btnEksport").addEventListener("click", function () {
-        var barisCSV = [["Timestamp", "Nama Penuh", "No IC", "Tempat Tinggal", "No Telefon", "No Waris"]];
+        var barisCSV = [["Timestamp", "Nama Penuh", "No IC", "Tempat Tinggal", "No Telefon", "No Waris", "Trip"]];
         dataNow.forEach(function (r) {
-          barisCSV.push([r.timestamp, r.nama, r.ic, r.alamat, r.telefon, r.waris]);
+          barisCSV.push([r.timestamp, r.nama, r.ic, r.alamat, r.telefon, r.waris, r.trip]);
         });
         var csv = "\ufeff" + barisCSV.map(function (row) {
           return row.map(function (c) {

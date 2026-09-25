@@ -1,5 +1,6 @@
 var SHEET_NAME = "Penyewa";
-var COL_HEADERS = ["Timestamp", "Nama Penuh", "No IC", "Tempat Tinggal", "No Waris", "No Telefon"];
+var COL_HEADERS = ["Timestamp", "Nama Penuh", "No IC", "Tempat Tinggal", "No Waris", "No Telefon", "Trip"];
+var TRIP_LIST = ["Selat", "Pulau Ketam", "Pulau Angsa", "Pintu Gedung", "Paloh", "Cencaru"];
 
 function getConfig(key) {
   var value = PropertiesService.getScriptProperties().getProperty(key);
@@ -22,8 +23,10 @@ function getSheet() {
     sheet.getRange(1, 1, 1, COL_HEADERS.length).setFontWeight("bold");
   } else {
     var header = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-    if (header.indexOf("No Telefon") === -1) {
-      sheet.getRange(1, COL_HEADERS.length).setValue("No Telefon");
+    for (var ci = 0; ci < COL_HEADERS.length; ci++) {
+      if (header.indexOf(COL_HEADERS[ci]) === -1) {
+        sheet.getRange(1, ci + 1).setValue(COL_HEADERS[ci]);
+      }
     }
   }
   return sheet;
@@ -68,13 +71,17 @@ function doPost(e) {
     }
 
     var nama = String(body.nama || "").trim();
+    var trip = String(body.trip || "").trim();
     var ic = String(body.ic || "").trim();
     var alamat = String(body.alamat || "").trim();
     var waris = String(body.waris || "").trim();
     var telefon = String(body.telefon || "").trim();
 
-    if (!nama || !ic || !alamat || !waris || !telefon) {
+    if (!nama || !trip || !ic || !alamat || !waris || !telefon) {
       return jsonResponse({ ok: false, error: "Semua medan wajib diisi." });
+    }
+    if (TRIP_LIST.indexOf(trip) === -1) {
+      return jsonResponse({ ok: false, error: "Pilihan trip tidak sah." });
     }
     if (!/^\d{12}$/.test(ic)) {
       return jsonResponse({ ok: false, error: "No IC mesti 12 digit (cth: 950101141234)." });
@@ -87,7 +94,7 @@ function doPost(e) {
     }
 
     var sheet = getSheet();
-    sheet.appendRow([new Date(), nama, ic, alamat, waris, telefon]);
+    sheet.appendRow([new Date(), nama, ic, alamat, waris, telefon, trip]);
     var lastRow = sheet.getLastRow();
     sheet.getRange(lastRow, 3).setNumberFormat("@").setValue(ic);
     sheet.getRange(lastRow, 5).setNumberFormat("@").setValue(waris);
@@ -117,7 +124,7 @@ function doGet(e) {
         var hri = Utilities.formatDate(tim, "Asia/Kuala_Lumpur", "yyyy-MM-dd");
         if (hri !== tarikh) continue;
       }
-      sen.push({ timestamp: w[0], nama: w[1], waris: w[4] });
+      sen.push({ timestamp: w[0], nama: w[1], waris: w[4], trip: w[6] });
     }
     sen.sort(function (a, b) {
       return new Date(b.timestamp) - new Date(a.timestamp);
@@ -149,7 +156,8 @@ function doGet(e) {
           ic: v[2],
           alamat: v[3],
           waris: v[4],
-          telefon: v[5]
+          telefon: v[5],
+          trip: v[6]
         });
       }
       rows.sort(function (a, b) {

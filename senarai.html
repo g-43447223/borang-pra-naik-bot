@@ -134,7 +134,7 @@
           spanNama.textContent = (i + 1) + ". " + r.nama;
           var spanMasa = document.createElement("span");
           spanMasa.className = "block text-xs text-slate-400";
-          spanMasa.textContent = formatMasa(r.timestamp);
+          spanMasa.textContent = (r.trip ? "Trip: " + r.trip + " · " : "") + formatMasa(r.timestamp);
           kiri.appendChild(spanNama);
           kiri.appendChild(spanMasa);
 

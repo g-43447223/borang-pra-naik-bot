@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Borang pendaftaran peserta trip memancing">
-  <title>Borang Peserta - TERITIP SEGARA SERVICES</title>
+  <title>Maklumat Pemancing - TERITIP SEGARA SERVICES</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>@keyframes alunan{from{transform:translateX(-12px)}to{transform:translateX(12px)}}.wave{animation:alunan 9s ease-in-out infinite alternate}</style>
   <script>window.APP = { SCRIPT_URL: "<?= ScriptApp.getService().getUrl() ?>" };</script>
@@ -15,7 +15,7 @@
     <div class="text-center mb-5">
       <h1 class="text-2xl leading-snug font-bold text-white inline-flex items-center justify-center gap-2">
         <svg class="inline-block w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13l18-1.5L18 18H6L3 13z"/><path d="M8 13V7h3.5L16 9v4"/><path d="M2 20h20"/></svg>
-        <span>Borang Peserta<br><span class="text-sky-300">TERITIP SEGARA SERVICES</span></span>
+        <span>Maklumat Pemancing</span>
       </h1>
       <p class="text-sm text-slate-400 mt-1">Sila isi borang ini sebelum menaiki bot untuk kegunaan kecemasan.</p>
       <svg class="wave w-full text-sky-500/30 mt-4" viewBox="0 0 1440 60" preserveAspectRatio="none" fill="currentColor" aria-hidden="true"><path d="M0 30C90 10 180 10 270 30s180 20 270 0 180-20 270 0 180 20 270 0 180-20 270 0V60H0z"/></svg>
@@ -43,6 +43,14 @@
                  placeholder="cth: 950101141234" required
                  class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-600/20">
           <p id="err-ic" class="text-red-600 text-xs mt-1 hidden" role="alert"></p>
+        </div>
+
+        <div>
+          <label for="telefon" class="block text-sm font-medium text-slate-700 mb-1">No Telefon</label>
+          <input id="telefon" name="telefon" type="tel" inputmode="tel"
+                 placeholder="cth: 012-3456789" required
+                 class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-600/20">
+          <p id="err-telefon" class="text-red-600 text-xs mt-1 hidden" role="alert"></p>
         </div>
 
         <div>
@@ -129,6 +137,7 @@
         e.preventDefault();
         setErr("err-nama", null);
         setErr("err-ic", null);
+        setErr("err-telefon", null);
         setErr("err-alamat", null);
         setErr("err-waris", null);
         setStatus("", false, false);
@@ -137,12 +146,14 @@
 
         var nama = document.getElementById("nama").value.trim();
         var ic = document.getElementById("ic").value.trim();
+        var telefon = document.getElementById("telefon").value.trim();
         var alamat = document.getElementById("alamat").value.trim();
         var waris = document.getElementById("waris").value.trim();
 
         var ok = true;
         if (!nama) { setErr("err-nama", "Sila masukkan nama penuh."); ok = false; }
         if (!/^\d{12}$/.test(ic)) { setErr("err-ic", "No IC mesti 12 digit."); ok = false; }
+        if (!/^\d[\d\s-]{7,12}$/.test(telefon)) { setErr("err-telefon", "No telefon tidak sah."); ok = false; }
         if (!alamat) { setErr("err-alamat", "Sila masukkan alamat / tempat tinggal."); ok = false; }
         if (!/^\d[\d\s-]{7,12}$/.test(waris)) { setErr("err-waris", "Nombor waris tidak sah."); ok = false; }
         if (!ok) return;
@@ -160,7 +171,7 @@
           var res = await fetch(scriptUrl, {
             method: "POST",
             headers: { "Content-Type": "text/plain" },
-            body: JSON.stringify({ nama: nama, ic: ic, alamat: alamat, waris: waris })
+            body: JSON.stringify({ nama: nama, ic: ic, telefon: telefon, alamat: alamat, waris: waris })
           });
           var data = await res.json();
           if (data.ok) {

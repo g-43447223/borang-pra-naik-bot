@@ -102,6 +102,7 @@
                 <th class="px-4 py-3">Nama</th>
                 <th class="px-4 py-3">No IC</th>
                 <th class="px-4 py-3">Tempat Tinggal</th>
+                <th class="px-4 py-3">No Telefon</th>
                 <th class="px-4 py-3">No Waris</th>
                 <th class="px-4 py-3">WhatsApp</th>
               </tr>
@@ -185,6 +186,7 @@
           tr.appendChild(buatSelData(r.nama));
           tr.appendChild(buatSelKonsum(r.ic));
           tr.appendChild(buatSelData(r.alamat));
+          tr.appendChild(buatSelKonsum(r.telefon));
           tr.appendChild(buatSelKonsum(r.waris));
 
           var td = document.createElement("td");
@@ -290,9 +292,9 @@
       document.getElementById("cari").addEventListener("input", render);
 
       document.getElementById("btnEksport").addEventListener("click", function () {
-        var barisCSV = [["Timestamp", "Nama Penuh", "No IC", "Tempat Tinggal", "No Waris"]];
+        var barisCSV = [["Timestamp", "Nama Penuh", "No IC", "Tempat Tinggal", "No Telefon", "No Waris"]];
         dataNow.forEach(function (r) {
-          barisCSV.push([r.timestamp, r.nama, r.ic, r.alamat, r.waris]);
+          barisCSV.push([r.timestamp, r.nama, r.ic, r.alamat, r.telefon, r.waris]);
         });
         var csv = "\ufeff" + barisCSV.map(function (row) {
           return row.map(function (c) {

@@ -1,4 +1,5 @@
 var SHEET_NAME = "Penyewa";
+var COL_HEADERS = ["Timestamp", "Nama Penuh", "No IC", "Tempat Tinggal", "No Waris", "No Telefon"];
 
 function getConfig(key) {
   var value = PropertiesService.getScriptProperties().getProperty(key);
@@ -17,8 +18,13 @@ function getSheet() {
   var sheet = ss.getSheetByName(SHEET_NAME);
   if (!sheet) {
     sheet = ss.insertSheet(SHEET_NAME);
-    sheet.appendRow(["Timestamp", "Nama Penuh", "No IC", "Tempat Tinggal", "No Waris"]);
-    sheet.getRange(1, 1, 1, 5).setFontWeight("bold");
+    sheet.appendRow(COL_HEADERS);
+    sheet.getRange(1, 1, 1, COL_HEADERS.length).setFontWeight("bold");
+  } else {
+    var header = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    if (header.indexOf("No Telefon") === -1) {
+      sheet.getRange(1, COL_HEADERS.length).setValue("No Telefon");
+    }
   }
   return sheet;
 }
@@ -43,8 +49,9 @@ function doPost(e) {
     var ic = String(body.ic || "").trim();
     var alamat = String(body.alamat || "").trim();
     var waris = String(body.waris || "").trim();
+    var telefon = String(body.telefon || "").trim();
 
-    if (!nama || !ic || !alamat || !waris) {
+    if (!nama || !ic || !alamat || !waris || !telefon) {
       return jsonResponse({ ok: false, error: "Semua medan wajib diisi." });
     }
     if (!/^\d{12}$/.test(ic)) {
@@ -53,12 +60,16 @@ function doPost(e) {
     if (!/^\d[\d\s-]{7,12}$/.test(waris)) {
       return jsonResponse({ ok: false, error: "Nombor waris tidak sah." });
     }
+    if (!/^\d[\d\s-]{7,12}$/.test(telefon)) {
+      return jsonResponse({ ok: false, error: "No telefon tidak sah." });
+    }
 
     var sheet = getSheet();
-    sheet.appendRow([new Date(), nama, ic, alamat, waris]);
+    sheet.appendRow([new Date(), nama, ic, alamat, waris, telefon]);
     var lastRow = sheet.getLastRow();
     sheet.getRange(lastRow, 3).setNumberFormat("@").setValue(ic);
     sheet.getRange(lastRow, 5).setNumberFormat("@").setValue(waris);
+    sheet.getRange(lastRow, 6).setNumberFormat("@").setValue(telefon);
     return jsonResponse({ ok: true, message: "Borang diterima. Selamat memancing!" });
   } catch (err) {
     return jsonResponse({ ok: false, error: "Ralat berlaku. Sila cuba lagi." });
@@ -133,7 +144,7 @@ function doGet(e) {
   }
 
   if (page === "form") {
-    return servePage("index", "Borang Peserta - TERITIP SEGARA SERVICES");
+    return servePage("index", "Maklumat Pemancing - TERITIP SEGARA SERVICES");
   }
 
   if (page === "pengurusan") {
